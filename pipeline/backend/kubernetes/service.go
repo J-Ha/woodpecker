@@ -15,16 +15,34 @@
 package kubernetes
 
 import (
+	"strconv"
+	"strings"
+
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
-func Service(namespace, name string, ports []uint16) (*v1.Service, error) {
+func Service(namespace, name string, portsproto []string) (*v1.Service, error) {
 	var svcPorts []v1.ServicePort
-	for _, port := range ports {
+	for _, portproto := range portsproto {
+		var protocol string
+		splitportproto := strings.Split(portproto, "/")
+		if len(splitportproto) == 2 && splitportproto[1] != "" {
+			protocol = strings.ToUpper(splitportproto[1])
+
+		} else {
+			protocol = "TCP"
+		}
+
+		port, err := strconv.Atoi(splitportproto[0])
+		if err != nil {
+			return nil, err
+		}
+
 		svcPorts = append(svcPorts, v1.ServicePort{
 			Port:       int32(port),
+			Protocol:   v1.Protocol(protocol),
 			TargetPort: intstr.IntOrString{IntVal: int32(port)},
 		})
 	}

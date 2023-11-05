@@ -32,17 +32,40 @@ func TestService(t *testing.T) {
 	  "spec": {
 	    "ports": [
 	      {
-	        "port": 1,
-	        "targetPort": 1
+	        "port": 1234,
+			"protocol": "UDP",
+	        "targetPort": 1234
 	      },
 	      {
-	        "port": 2,
-	        "targetPort": 2
+	        "port": 2345,
+			"protocol": "UDP",
+	        "targetPort": 2345
 	      },
 	      {
-	        "port": 3,
-	        "targetPort": 3
-	      }
+	        "port": 3456,
+			"protocol": "TCP",
+	        "targetPort": 3456
+		},
+		{
+		  "port": 4567,
+		  "protocol": "TCP",
+		  "targetPort": 4567
+		},
+		{
+		  "port": 5678,
+		  "protocol": "SCTP",
+		  "targetPort": 5678
+		},
+		{
+		  "port": 6789,
+		  "protocol": "SCTP",
+		  "targetPort": 6789
+		},
+		{
+		  "port": 7891,
+		  "protocol": "TCP",
+		  "targetPort": 7891
+		}
 	    ],
 	    "selector": {
 	      "step": "bar"
@@ -54,7 +77,7 @@ func TestService(t *testing.T) {
 	  }
 	}`
 
-	s, _ := Service("foo", "bar", []uint16{1, 2, 3})
+	s, _ := Service("foo", "bar", []string{"1234/udp", "2345/UDP", "3456/tcp", "4567/TCP", "5678/sctp", "6789/SCTP", "7891"})
 	j, err := json.Marshal(s)
 	assert.NoError(t, err)
 	assert.JSONEq(t, expected, string(j))
